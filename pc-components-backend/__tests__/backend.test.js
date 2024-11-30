@@ -2,6 +2,11 @@ const request = require('supertest');
 const app = require('../index'); 
 const Component = require('../models/Component');
 
+afterAll(async () => {
+  await db.close(); // Ensure the database connection is closed
+  if (server) server.close(); // Close the server if it was started during tests
+});
+
 describe('Component Routes', () => {
     // Test GET /api/components
     it('should get all components', async () => {
