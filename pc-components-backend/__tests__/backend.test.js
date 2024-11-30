@@ -3,17 +3,6 @@ const mongoose = require('mongoose');
 const app = require('../index'); 
 const Component = require('../models/Component');
 
-// MongoDB Test Connection String (use a dedicated test database)
-const mongoTestURI = 'mongodb+srv://Emce:Emce142107@cluster0.cdu3vgq.mongodb.net/pc_components_test?retryWrites=true&w=majority';
-
-beforeAll(async () => {
-  await mongoose.connect(mongoTestURI, { useNewUrlParser: true });
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-});
-
 describe('Component Routes', () => {
     // Test GET /api/components
     it('should get all components', async () => {
