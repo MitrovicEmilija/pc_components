@@ -2,9 +2,26 @@ const request = require('supertest');
 const app = require('../index'); 
 const Component = require('../models/Component');
 
+const mongoose = require('mongoose');
+let server;
+
+beforeAll(async () => {
+  // Connect to the database
+  await mongoose.connect('mongodb://localhost:27017/testdb', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+
+  // Start the server
+  server = app.listen(3000);
+});
+
 afterAll(async () => {
-  await db.close(); // Ensure the database connection is closed
-  if (server) server.close(); // Close the server if it was started during tests
+  // Close the database connection
+  await mongoose.connection.close();
+
+  // Close the server
+  server.close();
 });
 
 describe('Component Routes', () => {
