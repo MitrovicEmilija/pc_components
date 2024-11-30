@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const app = require('../index'); 
 const Component = require('../models/Component');
 
+afterAll(() => {
+  process.exit();
+});
+
 describe('Component Routes', () => {
     // Test GET /api/components
     it('should get all components', async () => {
