@@ -1,27 +1,27 @@
 const request = require('supertest');
+const mongoose = require('mongoose');
 const app = require('../index'); 
 const Component = require('../models/Component');
 
-const mongoose = require('mongoose');
-let server;
+// MongoDB Test Connection String (use a dedicated test database)
+const mongoTestURI = 'mongodb+srv://Emce:Emce142107@cluster0.cdu3vgq.mongodb.net/pc_components_test?retryWrites=true&w=majority';
 
 beforeAll(async () => {
-  // Connect to the database
-  await mongoose.connect('mongodb://localhost:27017/testdb', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-
-  // Start the server
-  server = app.listen(3000);
+    // Connect to the test database
+    await mongoose.connect(mongoTestURI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
 });
 
 afterAll(async () => {
-  // Close the database connection
-  await mongoose.connection.close();
+    // Close the database connection
+    await mongoose.connection.close();
+});
 
-  // Close the server
-  server.close();
+afterEach(async () => {
+    // Clean up the test database after each test
+    await Component.deleteMany({});
 });
 
 describe('Component Routes', () => {
