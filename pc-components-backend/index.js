@@ -16,7 +16,11 @@ app.use('/api/components', componentRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(5001, () => {
+        console.log('Server running on port 5001');
+    });
+}
 
+
+module.exports = app;

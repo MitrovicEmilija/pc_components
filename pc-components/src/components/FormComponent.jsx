@@ -5,9 +5,25 @@ import { TextField, Button, Box, Typography } from '@mui/material';
 const FormComponent = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+    
+        // Check if both fields are filled
+        if (!name || !price) {
+            alert('Please fill out both fields.');
+            return;
+        }
+    
+        // Check if price is a valid number
+        if (isNaN(price) || price <= 0) {
+            alert('Please enter a valid number for the price.');
+            return;
+        }
+    
+        setIsLoading(true); // Show loading state
+    
         try {
             await addComponent({ name, price });
             alert('Component successfully saved.');
@@ -15,8 +31,10 @@ const FormComponent = () => {
             setPrice('');
         } catch (error) {
             alert('Error during saving.');
+        } finally {
+            setIsLoading(false); // Hide loading state
         }
-    };
+    };         
 
     const formStyle = {
         display: 'flex',
@@ -50,6 +68,9 @@ const FormComponent = () => {
             <Typography variant="h5" textAlign="center">
                 Add New Component
             </Typography>
+
+            {isLoading && <div>Loading...</div>}
+
             <TextField
                 label="Name of the component"
                 variant="outlined"
