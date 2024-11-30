@@ -14,16 +14,6 @@ beforeAll(async () => {
     });
 });
 
-afterAll(async () => {
-    // Close the database connection
-    await mongoose.connection.close();
-});
-
-afterEach(async () => {
-    // Clean up the test database after each test
-    await Component.deleteMany({});
-});
-
 describe('Component Routes', () => {
     // Test GET /api/components
     it('should get all components', async () => {
