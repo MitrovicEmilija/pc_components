@@ -1,0 +1,113 @@
+name: Full CI for Frontend and Backend
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # Job for building and testing the backend
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: pc-components-backend/node_modules
+          key: ${{ runner.os }}-backend-${{ hashFiles('pc-components-backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-backend-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          cd pc-components-backend
+          npm ci
+
+      - name: Run backend tests with coverage
+        run: |
+          cd pc-components-backend
+          npm run test:ci
+
+      - name: Upload backend coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: pc-components-backend/coverage/
+          retention-days: 5
+
+  # Job for building and testing the frontend
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: pc-components/node_modules
+          key: ${{ runner.os }}-frontend-${{ hashFiles('pc-components/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          cd pc-components
+          npm ci
+
+      - name: Run frontend tests with coverage
+        run: |
+          cd pc-components
+          npm run test:ci
+
+      - name: Upload frontend coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: pc-components/coverage/
+          retention-days: 5
+
+  # Combine the results
+  combine-coverage:
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download backend coverage report
+        uses: actions/download-artifact@v2
+        with:
+          name: backend-coverage
+          path: ./backend-coverage
+
+      - name: Download frontend coverage report
+        uses: actions/download-artifact@v2
+        with:
+          name: frontend-coverage
+          path: ./frontend-coverage
+
+      - name: Combine and analyze coverage
+        run: |
+          # Example: Combine coverage reports using NYC or similar tools
+          echo "Combining and analyzing frontend and backend coverage data"
+          nyc merge ./backend-coverage ./frontend-coverage > combined-coverage.json
+          echo "Combined coverage saved as combined-coverage.json"
