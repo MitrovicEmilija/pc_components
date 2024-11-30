@@ -84,30 +84,3 @@ jobs:
           name: frontend-coverage
           path: pc-components/coverage/
           retention-days: 5
-
-  # Combine the results
-  combine-coverage:
-    needs: [frontend, backend]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Download backend coverage report
-        uses: actions/download-artifact@v2
-        with:
-          name: backend-coverage
-          path: ./backend-coverage
-
-      - name: Download frontend coverage report
-        uses: actions/download-artifact@v2
-        with:
-          name: frontend-coverage
-          path: ./frontend-coverage
-
-      - name: Combine and analyze coverage
-        run: |
-          # Example: Combine coverage reports using NYC or similar tools
-          echo "Combining and analyzing frontend and backend coverage data"
-          nyc merge ./backend-coverage ./frontend-coverage > combined-coverage.json
-          echo "Combined coverage saved as combined-coverage.json"
