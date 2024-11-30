@@ -7,11 +7,11 @@ const Component = require('../models/Component');
 const mongoTestURI = 'mongodb+srv://Emce:Emce142107@cluster0.cdu3vgq.mongodb.net/pc_components_test?retryWrites=true&w=majority';
 
 beforeAll(async () => {
-    // Connect to the test database
-    await mongoose.connect(mongoTestURI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
+  await mongoose.connect(mongoTestURI, { useNewUrlParser: true });
+});
+
+afterAll(async () => {
+  await mongoose.disconnect();
 });
 
 describe('Component Routes', () => {
