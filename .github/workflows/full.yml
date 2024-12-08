@@ -46,6 +46,13 @@ jobs:
           name: backend-coverage
           path: pc-components-backend/coverage/
           retention-days: 5
+      
+      - name: Upload backend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-build
+          path: pc-components-backend/build  # Adjust as needed for your backend build output
+          retention-days: 5
 
   # Job for building and testing the frontend
   frontend:
@@ -83,4 +90,11 @@ jobs:
         with:
           name: frontend-coverage
           path: pc-components/coverage/
+          retention-days: 5
+
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: pc-components/dist  # Uploading the dist folder
           retention-days: 5
