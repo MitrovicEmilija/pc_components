@@ -4,6 +4,10 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 
 const modalStyle = {
     position: 'absolute',
@@ -21,11 +25,17 @@ const modalStyle = {
 const EditForm = ({ component, onClose, onUpdate }) => {
     const [name, setName] = useState(component.name);
     const [price, setPrice] = useState(component.price);
+    const [category, setCategory] = useState(component.category); // Add category state
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const updatedComponent = await onUpdate({ ...component, name, price });
+            const updatedComponent = await onUpdate({
+                ...component,
+                name,
+                price,
+                category, // Include category in the update
+            });
             if (updatedComponent) {
                 onClose();
             }
@@ -65,6 +75,21 @@ const EditForm = ({ component, onClose, onUpdate }) => {
                         onChange={(e) => setPrice(e.target.value)}
                         required
                     />
+                    {/* Category Dropdown */}
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel>Category</InputLabel>
+                        <Select
+                            label="Category"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            required
+                        >
+                            <MenuItem value="Hardware">Hardware</MenuItem>
+                            <MenuItem value="Software">Software</MenuItem>
+                            <MenuItem value="Accessories">Accessories</MenuItem>
+                        </Select>
+                    </FormControl>
+
                     <Box mt={2} display="flex" justifyContent="space-between">
                         <Button variant="contained" color="primary" type="submit">
                             Save

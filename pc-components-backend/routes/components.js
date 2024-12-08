@@ -5,8 +5,8 @@ const Component = require('../models/Component');
 // Get all components
 router.get('/', async (req, res) => {
     try {
-        const components = await Component.find();
-        res.status(200).json(components); 
+        const components = await Component.find(); // Retrieve all documents
+        res.status(200).json(components); // Return the fetched components
     } catch (error) {
         res.status(500).json({ message: 'Error fetching components', error: error.message });
     }
@@ -30,18 +30,23 @@ router.get('/:id', async (req, res) => {
 
 // Add a new component
 router.post('/', async (req, res) => {
-    const { name, price } = req.body;
-
-    if (!name || !price) {
-        return res.status(400).json({ message: 'Missing required fields' });
-    }
-
+    console.log('Request body:', req.body); // Log the incoming data
     try {
-        const newComponent = new Component({ name, price });
+        const { name, price, category } = req.body;
+
+        // Validation
+        if (!name || !price || !category) {
+            return res.status(400).json({ message: 'All fields are required.' });
+        }
+
+        const newComponent = new Component({ name: name, price: price, category: category });
         await newComponent.save();
+        console.log('Component saved: ', newComponent);
+
         res.status(201).json(newComponent);
     } catch (error) {
-        res.status(500).json({ message: 'Error adding component', error: error.message });
+        console.error('Error saving component:', error);
+        res.status(500).json({ message: 'Error during saving component.', error: error.message });
     }
 });
 
@@ -63,16 +68,21 @@ router.delete('/:id', async (req, res) => {
 
 // Update an existing component
 router.put('/:id', async (req, res) => {
-    const { name, price } = req.body;
+    const { name, price, category } = req.body;
 
-    if (!name || !price) {
+    if (!name || !price || !category) {
         return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // Ensure the category is valid
+    if (!['Hardware', 'Software', 'Accessories'].includes(category)) {
+        return res.status(400).json({ message: 'Invalid category' });
     }
 
     try {
         const component = await Component.findByIdAndUpdate(
             req.params.id,
-            { name, price },
+            { name, price, category }, // Update category along with name and price
             { new: true, runValidators: true }
         );
 

@@ -1,40 +1,45 @@
 import React, { useState } from 'react';
 import { addComponent } from '../services/api';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, Select, MenuItem } from '@mui/material';
 
 const FormComponent = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
+    const [category, setCategory] = useState('Hardware'); // New state for category
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
-        // Check if both fields are filled
-        if (!name || !price) {
-            alert('Please fill out both fields.');
+
+        // Check if all fields are filled
+        if (!name || !price || !category) {
+            alert('Please fill out all fields.');
             return;
         }
-    
+
         // Check if price is a valid number
         if (isNaN(price) || price <= 0) {
             alert('Please enter a valid number for the price.');
             return;
         }
-    
+
         setIsLoading(true); // Show loading state
-    
+
+        const componentData = { name, price, category };
+        console.log(componentData); // Log the data being sent
+
         try {
-            await addComponent({ name, price });
+            await addComponent(componentData); // Send the data
             alert('Component successfully saved.');
             setName('');
             setPrice('');
+            setCategory(''); // Clear category selection
         } catch (error) {
             alert('Error during saving.');
         } finally {
             setIsLoading(false); // Hide loading state
         }
-    };         
+    };
 
     const formStyle = {
         display: 'flex',
@@ -57,7 +62,6 @@ const FormComponent = () => {
             backgroundColor: '#512DA8',
         },
     };
-
 
     return (
         <Box
@@ -86,6 +90,19 @@ const FormComponent = () => {
                 onChange={(e) => setPrice(e.target.value)}
                 required
             />
+            <Select
+                value={category}
+                onChange={(e) => {
+                    setCategory(e.target.value);
+                    console.log(e.target.value); // Log the selected category
+                }}
+                label="Category"
+            >
+                <MenuItem value="Hardware">Hardware</MenuItem>
+                <MenuItem value="Software">Software</MenuItem>
+                <MenuItem value="Accessories">Accessories</MenuItem>
+            </Select>
+
             <Button type="submit" variant="contained" color="primary" sx={buttonStyle}>
                 Add Component
             </Button>

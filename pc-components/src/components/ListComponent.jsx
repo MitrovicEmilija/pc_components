@@ -14,8 +14,12 @@ const ListComponent = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await getComponent();
-            setComponents(data);
+            try {
+                const { data } = await getComponent(); // Get all components without search term
+                setComponents(data);
+            } catch (error) {
+                alert('Error fetching components.');
+            }
         };
         fetchData();
     }, []);
@@ -38,6 +42,7 @@ const ListComponent = () => {
             const { data } = await updateComponent(updatedComponent._id, {
                 name: updatedComponent.name,
                 price: updatedComponent.price,
+                category: updatedComponent.category, // Update category as well
             });
             setComponents(
                 components.map((comp) =>
@@ -52,24 +57,26 @@ const ListComponent = () => {
     };
 
     const listItemStyle = {
-        backgroundColor: 'rgba(0, 0, 0, 0.4)', 
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
         color: '#FFFFFF',
         borderRadius: '8px',
         marginBottom: '8px',
         padding: '8px',
-    };    
-
-    const iconButtonStyle = {
-        color: '#FFD700', 
     };
 
+    const iconButtonStyle = {
+        color: '#FFD700',
+    };
 
     return (
         <div>
             <List>
                 {components.map((comp) => (
                     <ListItem key={comp._id} divider sx={listItemStyle}>
-                        <ListItemText primary={`${comp.name} - €${comp.price}`} />
+                        <ListItemText 
+                            primary={`${comp.name} - €${comp.price}`} 
+                            secondary={`Category: ${comp.category}`} // Display category
+                        />
                         <IconButton edge="end" color="primary" onClick={() => handleEdit(comp)}>
                             <EditIcon />
                         </IconButton>
