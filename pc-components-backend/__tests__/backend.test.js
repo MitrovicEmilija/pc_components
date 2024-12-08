@@ -4,7 +4,7 @@ const app = require('../index');
 const Component = require('../models/Component');
 
 afterAll(async () => {
-    await mongoose.connection.close(); // Close the connection after tests
+    process.exit()
 });
 
 describe('Component Routes', () => {
