@@ -2,9 +2,12 @@ const request = require('supertest');
 const mongoose = require('mongoose');
 const app = require('../index');
 const Component = require('../models/Component');
+const connectDB = require('../config/db'); // Import db connection
+
+beforeAll(connectDB);
 
 afterAll(async () => {
-    await mongoose.connection.close();
+    await mongoose.connection.close();  // Ensure the connection is closed after tests
 });
 
 describe('Component Routes', () => {
