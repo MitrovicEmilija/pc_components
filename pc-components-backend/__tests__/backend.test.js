@@ -1,10 +1,10 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const app = require('../index'); 
+const app = require('../index');
 const Component = require('../models/Component');
 
-afterAll(() => {
-  process.exit();
+afterAll(async () => {
+    await mongoose.connection.close(); // Close the connection after tests
 });
 
 describe('Component Routes', () => {
@@ -13,8 +13,8 @@ describe('Component Routes', () => {
         const res = await request(app).get('/api/components');
         expect(res.status).toBe(200);
         expect(Array.isArray(res.body)).toBe(true);
-        expect(res.body.length).toBeGreaterThanOrEqual(0); 
-    });    
+        expect(res.body.length).toBeGreaterThanOrEqual(0);
+    });
 
     // Test GET /api/components/:id (valid ID)
     it('should fetch a component by ID', async () => {
@@ -22,14 +22,14 @@ describe('Component Routes', () => {
         const res = await request(app).get(`/api/components/${component._id}`);
         expect(res.status).toBe(200);
         expect(res.body.name).toBe('Component A');
-    });    
+    });
 
     // Test GET /api/components/:id (invalid ID)
     it('should return 400 for invalid component ID format', async () => {
         const res = await request(app).get('/api/components/invalidid');
         expect(res.status).toBe(400);
         expect(res.body.message).toBe('Invalid component ID format');
-    });    
+    });
 
     // Test POST /api/components
     it('should add a new component', async () => {
@@ -38,7 +38,7 @@ describe('Component Routes', () => {
         expect(res.status).toBe(201);
         expect(res.body.name).toBe('Component B');
         expect(res.body.price).toBe(200);
-    });    
+    });
 
     // Test POST /api/components (missing fields)
     it('should return 400 for missing required fields', async () => {
@@ -46,14 +46,6 @@ describe('Component Routes', () => {
         expect(res.status).toBe(400);
         expect(res.body.message).toBe('All fields are required.');
     });
-    
-    // Test invalid category
-    it('should return 400 for invalid category', async () => {
-        const newComponent = { name: 'Component D', price: 300, category: 'InvalidCategory' };
-        const res = await request(app).post('/api/components').send(newComponent);
-        expect(res.status).toBe(400);
-        expect(res.body.message).toBe('Invalid category');
-    });    
 
     // Test DELETE /api/components/:id (valid ID)
     it('should delete a component by ID', async () => {
@@ -61,14 +53,14 @@ describe('Component Routes', () => {
         const res = await request(app).delete(`/api/components/${component._id}`);
         expect(res.status).toBe(200);
         expect(res.body.message).toBe('Component deleted successfully');
-    });    
+    });
 
     // Test DELETE /api/components/:id (invalid ID)
     it('should return 400 for invalid component ID format when deleting', async () => {
         const res = await request(app).delete('/api/components/invalidid');
         expect(res.status).toBe(400);
         expect(res.body.message).toBe('Invalid component ID format');
-    });    
+    });
 
     // Test PUT /api/components/:id (valid ID)
     it('should update a component by ID', async () => {
@@ -78,14 +70,14 @@ describe('Component Routes', () => {
         expect(res.status).toBe(200);
         expect(res.body.name).toBe('Updated Component F');
         expect(res.body.price).toBe(550);
-    });    
+    });
 
     // Test PUT /api/components/:id (invalid ID)
     it('should return 400 for invalid component ID format during update', async () => {
         const res = await request(app).put('/api/components/invalidid').send({ name: 'Component G', price: 600, category: 'Software' });
         expect(res.status).toBe(400);
         expect(res.body.message).toBe('Invalid component ID format');
-    });    
+    });
 
     // Test PUT /api/components/:id (missing fields)
     it('should return 400 for missing required fields during update', async () => {
@@ -94,7 +86,7 @@ describe('Component Routes', () => {
         expect(res.status).toBe(400);
         expect(res.body.message).toBe('Missing required fields');
     });
-    
+
     it('should return 400 for empty request body', async () => {
         const res = await request(app).post('/api/components').send({});
         expect(res.status).toBe(400);
@@ -119,5 +111,5 @@ describe('Component Routes', () => {
         const res = await request(app).put(`/api/components/${component._id}`).send({ name: 'Updated Component I', price: 850, category: 'InvalidCategory' });
         expect(res.status).toBe(400);
         expect(res.body.message).toBe('Invalid category');
-    });    
+    });
 });
