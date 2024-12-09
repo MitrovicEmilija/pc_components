@@ -1,0 +1,82 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # Gradnja backenda
+  build-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: pc-components-backend/node_modules
+          key: ${{ runner.os }}-backend-${{ hashFiles('pc-components-backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-backend-
+
+      - name: Install dependencies
+        run: |
+          cd pc-components-backend
+          npm ci
+
+      - name: Upload backend artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-build
+          path: |
+            pc-components-backend/
+            pc-components-backend/node_modules/
+
+  # Testiranje backenda
+  test-backend:
+    needs: build-backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: pc-components-backend/node_modules
+          key: ${{ runner.os }}-backend-${{ hashFiles('pc-components-backend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-backend-
+
+      - name: Install dependencies
+        run: |
+          cd pc-components-backend
+          npm install
+
+      - name: Run tests with coverage
+        run: |
+          cd pc-components-backend
+          npm run test:ci
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: pc-components-backend/coverage/
