@@ -5,8 +5,8 @@ const Component = require('../models/Component');
 // Get all components
 router.get('/', async (req, res) => {
     try {
-        const components = await Component.find(); // Retrieve all documents
-        res.status(200).json(components); // Return the fetched components
+        const components = await Component.find(); 
+        res.status(200).json(components); 
     } catch (error) {
         res.status(500).json({ message: 'Error fetching components', error: error.message });
     }
@@ -30,11 +30,10 @@ router.get('/:id', async (req, res) => {
 
 // Add a new component
 router.post('/', async (req, res) => {
-    console.log('Request body:', req.body); // Log the incoming data
+    console.log('Request body:', req.body); 
     try {
         const { name, price, category } = req.body;
 
-        // Validation
         if (!name || !price || !category) {
             return res.status(400).json({ message: 'All fields are required.' });
         }
@@ -74,7 +73,6 @@ router.put('/:id', async (req, res) => {
         return res.status(400).json({ message: 'Missing required fields' });
     }
 
-    // Ensure the category is valid
     if (!['Hardware', 'Software', 'Accessories'].includes(category)) {
         return res.status(400).json({ message: 'Invalid category' });
     }
@@ -82,7 +80,7 @@ router.put('/:id', async (req, res) => {
     try {
         const component = await Component.findByIdAndUpdate(
             req.params.id,
-            { name, price, category }, // Update category along with name and price
+            { name, price, category }, 
             { new: true, runValidators: true }
         );
 
