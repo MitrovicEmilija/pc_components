@@ -104,7 +104,7 @@ jobs:
       - name: Build Docker image
         run: |
           cd pc-components
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-react-frontend:latest -f Dockerfile .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-react-frontend:latest -f ./pc-components/Dockerfile .
 
       - name: Push Docker image to Docker Hub
         run: |
