@@ -95,6 +95,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Debug Directory Structure
+        run: |
+          echo "Current Directory: $(pwd)"
+          echo "Listing files:"
+          ls -R
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -103,8 +109,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          cd pc_components/pc-components
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-react-frontend:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-react-frontend:latest -f pc-components/Dockerfile .
 
       - name: Push Docker image to Docker Hub
         run: |
