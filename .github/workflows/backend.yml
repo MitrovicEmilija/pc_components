@@ -99,4 +99,4 @@ jobs:
 
       - name: Deploy to Render
         run: |
-          render deploy --service-id=${{ secrets.RENDER_SERVICE_ID }} --api-key=${{ secrets.RENDER_API_KEY }}
+          render deploys --service-id=${{ secrets.RENDER_SERVICE_ID }} --api-key=${{ secrets.RENDER_API_KEY }}
