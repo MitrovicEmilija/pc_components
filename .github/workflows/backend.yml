@@ -80,26 +80,3 @@ jobs:
         with:
           name: backend-coverage
           path: pc-components-backend/coverage/
-
-  # Deploy backend to Render
-  deploy-backend:
-    needs: test-backend
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Install Render CLI
-      - name: Install Render CLI
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/render-oss/cli/refs/heads/main/bin/install.sh | sh
-          export PATH=$PATH:/root/.local/bin
-          echo "PATH=$PATH"
-
-      - name: Set RENDER_API_KEY environment variable
-        run: echo "RENDER_API_KEY=${{ secrets.RENDER_API_KEY }}" >> $GITHUB_ENV
-    
-      - name: Deploy to Render
-        run: |
-          render deploys create ${{ secrets.RENDER_SERVICE_ID }} --confirm
