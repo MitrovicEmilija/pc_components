@@ -92,7 +92,9 @@ jobs:
 
       - name: Install Render CLI
         run: |
-          npm install -g @render/cli
+          curl -fsSL https://render.com/install-cli.sh | bash
+          export PATH=$PATH:/root/.render
+      
 
       - name: Deploy to Render
         run: |
