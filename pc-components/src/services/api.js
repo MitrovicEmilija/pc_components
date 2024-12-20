@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5001/api/components';
+const API_URL = 'https://pc-components.onrender.com/api/components';
 
 export const getComponent = () => axios.get(API_URL);
 export const addComponent = (component) => axios.post(API_URL, component);
