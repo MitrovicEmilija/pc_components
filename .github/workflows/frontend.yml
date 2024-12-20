@@ -132,4 +132,4 @@ jobs:
       - name: Deploy to Vercel
         run: |
           cd pc-components
-          vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
+          vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
