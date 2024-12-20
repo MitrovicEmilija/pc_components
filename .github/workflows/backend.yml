@@ -93,8 +93,7 @@ jobs:
       - name: Install Render CLI
         run: |
           curl -fsSL https://render.com/install-cli.sh | bash
-          export PATH=$PATH:/root/.render
-      
+          echo "$HOME/.render" >> $GITHUB_PATH
 
       - name: Deploy to Render
         run: |
