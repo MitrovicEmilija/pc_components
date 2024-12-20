@@ -80,3 +80,20 @@ jobs:
         with:
           name: backend-coverage
           path: pc-components-backend/coverage/
+
+  # Deploy backend to Render
+  deploy-backend:
+    needs: test-backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Render CLI
+        run: |
+          npm install -g @render/cli
+
+      - name: Deploy to Render
+        run: |
+          render deploy --service-id=${{ secrets.RENDER_SERVICE_ID }} --api-key=${{ secrets.RENDER_API_KEY }}
