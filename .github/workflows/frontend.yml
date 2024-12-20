@@ -126,7 +126,7 @@ jobs:
 
       - name: Set up Vercel CLI
         run: |
-          curl -fsSL https://vercel.com/download | bash
+          npm install -g vercel
           export PATH=$PATH:/root/.vercel/bin
 
       - name: Vercel Login
