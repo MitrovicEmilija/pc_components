@@ -129,9 +129,6 @@ jobs:
           npm install -g vercel
           export PATH=$PATH:/root/.vercel/bin
 
-      - name: Vercel Login
-        run: vercel login ${{ secrets.VERCEL_TOKEN }}
-
       - name: Deploy to Vercel
         run: |
           cd pc-components
