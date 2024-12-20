@@ -90,11 +90,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Render CLI
-        run: |
-          curl -fsSL https://render.com/install-cli.sh | bash
-          echo "$HOME/.render" >> $GITHUB_PATH
-
       - name: Deploy to Render
         run: |
           render deploy --service-id=${{ secrets.RENDER_SERVICE_ID }} --api-key=${{ secrets.RENDER_API_KEY }}
