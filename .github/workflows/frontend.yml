@@ -115,27 +115,24 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/my-react-frontend:latest
 
-  # Deploy na Firebase Hosting
-  deploy-to-firebase:
-    needs: test-frontend
+  # Deploy to Vercel
+  vercel-deploy:
+    needs: docker-deploy
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Download build artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: frontend-build
-        path: pc-components/build
+      - name: Set up Vercel CLI
+        run: |
+          curl -fsSL https://vercel.com/download | bash
+          export PATH=$PATH:/root/.vercel/bin
 
-    - name: Setup Firebase CLI
-      run: |
-        cd pc-components
-        npm install -g firebase-tools
+      - name: Vercel Login
+        run: vercel login ${{ secrets.VERCEL_TOKEN }}
 
-    - name: Deploy to Firebase Hosting
-      run: |
-        cd pc-components
-        firebase deploy --only hosting --token ${{ secrets.FIREBASE_TOKEN }}
+      - name: Deploy to Vercel
+        run: |
+          cd pc-components
+          vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
