@@ -90,6 +90,8 @@ jobs:
   docker-deploy:
     needs: test-frontend
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'development' || 'production' }}
 
     steps:
       - name: Checkout code
@@ -109,16 +111,18 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-react-frontend:latest -f pc-components/Dockerfile .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-react-frontend:${{ github.ref == 'refs/heads/main' && 'dev' || 'prod' }} -f pc-components/Dockerfile .
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/my-react-frontend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/my-react-frontend:${{ github.ref == 'refs/heads/main' && 'dev' || 'prod' }}
 
-  # Deploy to Vercel
+  # Deploy to Vercel (for Development only)
   vercel-deploy:
     needs: docker-deploy
     runs-on: ubuntu-latest
+    environment:
+      name: development
 
     steps:
       - name: Checkout code
@@ -134,18 +138,21 @@ jobs:
           cd pc-components
           vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
 
-  # Gradnja GitHub pages
+  # Gradnja GitHub pages (for Development only)
   deploy-pages:
     needs: test-frontend
     runs-on: ubuntu-latest
     permissions:
-      contents: write 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      contents: write
+    environment:
+      name: development
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
